@@ -1,0 +1,17 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+
+#Display LGBTQ+ historical sites from around the world on a map, sorted in table view by country name
+
+#defaultView:Map
+SELECT ?place ?placeLabel ?countryLabel ?coordinates
+WHERE
+{
+  ?place wdt:P31/wdt:P279* wd:Q29469577;
+  wdt:P17 ?country;
+  wdt:P625 ?coordinates.
+  SERVICE wikibase:label {bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".}
+}
+ORDER BY ASC(?countryLabel)
