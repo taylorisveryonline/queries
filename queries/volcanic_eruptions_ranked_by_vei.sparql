@@ -1,0 +1,36 @@
+PREFIX dbr:	<http://dbpedia.org/resource/>
+PREFIX dbp:	<http://dbpedia.org/property/>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dbo:	<http://dbpedia.org/ontology/>
+PREFIX dbt:	<http://dbpedia.org/resource/Template:>
+
+# List volcanic eruptions of various categories with their eruption years, ranked by VEI (volcanic explosivity index) in descending order
+
+SELECT DISTINCT ?eruption ?label ?date ?vei
+WHERE
+{
+  VALUES ?category { 
+	dbr:Plinian_eruption 
+	dbr:Phreatic_eruption 
+	dbr:Peléan_eruption
+	dbr:volcanic_eruption
+	dbr:Subglacial_eruption
+	dbr:Submarine_eruption
+	dbr:Surtseyan_eruption
+	dbr:Phreatomagmatic_eruption
+	dbr:Vulcanian_eruption
+	dbr:Strombolian_eruption
+	dbr:Hawaiian_eruption
+	dbr:magmatic_eruption
+	dbr:explosive_eruption
+	dbr:volcanic_phenomenon
+	dbr:volcanic_event
+  } 
+  ?eruption dbp:type ?category;
+    rdfs:label ?label.
+  FILTER langMatches(lang(?label),"en")
+  OPTIONAL {?eruption dbp:date | dbp:startDate | dbp:endDate  | dbo:eruptionYear  ?date}
+  OPTIONAL {?eruption dbp:vei ?vei}
+  OPTIONAL {?eruption dbp:wikiPageUsesTemplate dbt:Infobox_eruption}
+}
+ORDER BY DESC(?vei)
