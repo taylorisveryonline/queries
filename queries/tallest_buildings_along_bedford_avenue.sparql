@@ -1,0 +1,27 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX osmm: <https://www.openstreetmap.org/meta/>
+PREFIX osmt: <https://wiki.openstreetmap.org/wiki/Key:>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# Tallest buildings along Bedford Avenue in Brooklyn, ordered by height
+
+SELECT ?building ?address ?heightInMeters
+WHERE {
+	?building osmt:addr:street "Bedford Avenue";
+            osmt:addr:housenumber ?houseNumber;
+			      osmt:height ?height;
+			      osmt:building "yes".
+
+	# Draw an approximate bounding box around Brooklyn
+	SERVICE wikibase:box {
+		?building osmm:loc ?coordinates.
+		bd:serviceParam wikibase:cornerSouthWest 'Point(-74.044570 40.562530)'^^geo:wktLiteral.
+		bd:serviceParam wikibase:cornerNorthEast 'Point(-73.846816 40.750578)'^^geo:wktLiteral.
+	}
+
+    BIND(CONCAT(?houseNumber, " Bedford Ave.") AS ?address)
+    BIND(xsd:decimal(?height) AS ?heightInMeters)
+}
+ORDER BY DESC(?heightInMeters)
