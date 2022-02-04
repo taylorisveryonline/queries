@@ -1,0 +1,24 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+# PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+
+# Railway stations within 1km, ordered by proximity
+
+SELECT DISTINCT ?place ?placeLabel ?location ?distanceKm
+WHERE {
+  BIND ("Point(-75.6538745 45.4164349)"^^geo:wktLiteral as ?point)
+  SERVICE wikibase:around {
+     ?place wdt:P625 ?location.
+     bd:serviceParam wikibase:center ?point.
+     bd:serviceParam wikibase:radius "1".
+  } 
+  ?place wdt:P31/wdt:P279* wd:Q55488.
+  SERVICE wikibase:label {bd:serviceParam wikibase:language "en".}
+  # Referencing ?point in this bind statement seems to cause performance issues, at least when using Wikidata's SPARQL endpoint
+  # Until this query is improved, app developers would need to reference the geocoordinates in the app code here
+  BIND(geof:distance("Point(-75.6538745 45.4164349)"^^geo:wktLiteral, ?location) as ?distanceKm) 
+} 
+ORDER BY ?distanceKm
