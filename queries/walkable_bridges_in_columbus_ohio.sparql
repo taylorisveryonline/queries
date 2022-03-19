@@ -1,0 +1,26 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX osmm: <https://www.openstreetmap.org/meta/>
+PREFIX osmt: <https://wiki.openstreetmap.org/wiki/Key:>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+
+# Bridges marked walkable on OSM in and around Columbus, Ohio
+
+#defaultView:Map
+SELECT *
+WHERE {
+  ?bridge osmt:bridge "yes";
+          osmt:foot "yes".
+  
+   SERVICE wikibase:box {
+    ?bridge osmm:loc ?coordinates.
+    # Bounding box around Columbus, Ohio
+    bd:serviceParam wikibase:cornerSouthWest "Point(-83.23 39.78)"^^geo:wktLiteral.
+    bd:serviceParam wikibase:cornerNorthEast "Point(-82.76 40.18)"^^geo:wktLiteral.
+  }
+  
+  OPTIONAL {
+    ?bridge osmt:name ?name.
+  }
+}
+ORDER BY DESC(?name)
