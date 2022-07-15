@@ -1,0 +1,26 @@
+PREFIX dbc: <http://dbpedia.org/resource/Category:>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dbo:	<http://dbpedia.org/ontology/>
+PREFIX gold:	<http://purl.org/linguistics/gold/>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+
+# Apple cultivars listed in the English Wikipedia, ordered by place of origin
+
+SELECT *
+WHERE
+{
+  ?cultivar dct:subject dbc:Apple_cultivars;
+  rdfs:label ?label.
+
+  # Gather cultivar points of origin, if populated
+  OPTIONAL {
+    ?cultivar dbo:origin ?origin.
+    # Work in progress: for cultivars that list multiple origins, choose the most specific of origins listed (this part of the query is commented out until functional).
+    # ?origin gold:hypernym ?hypernym.
+    # Eventually this could be a federated query that displays an OSM view with places of origin marked
+  }
+
+  FILTER langMatches(lang(?label),"en")
+}
+# Order results by origins in ascending order, starting with cultivars that have origins listed
+ORDER BY (!BOUND(?origin)) ASC (STR(?origin))
