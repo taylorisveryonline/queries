@@ -1,0 +1,10 @@
+# "Magical girl" anime series that debuted in the early 1990s
+SELECT ?item ?itemLabel
+WHERE 
+{
+  ?item wdt:P31 wd:Q63952888;
+        wdt:P136 wd:Q752321;
+        wdt:P577 ?debut.
+  FILTER("1990-01-01"^^xsd:dateTime <= ?debut && ?debut < "1995-01-01"^^xsd:dateTime).
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
