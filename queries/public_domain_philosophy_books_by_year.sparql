@@ -1,0 +1,36 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# Search wikidata for philosophy books that qualify as public domain works in the United States, given year of publication
+
+SELECT ?book ?bookLabel ?authorLabel ?yearPublished ?subjectLabel
+WHERE
+{
+  VALUES ?subject { # this list of values comes from the "has parts" list of the philosophy entry (Q5891)
+    wd:Q44325
+    wd:Q35277
+    wd:Q9471
+    wd:Q59115
+    wd:Q16669800
+    wd:Q2476757
+    wd:Q35986
+    wd:Q179805
+    wd:Q9465
+    wd:Q8078
+    wd:Q484761
+    wd:Q23407
+    wd:Q209295
+    wd:Q180536
+    wd:Q190721
+  }
+  ?book wdt:P31 wd:Q7725634;
+        wdt:P921 ?subject;
+        wdt:P577 ?yearPublished.
+  FILTER("1929-01-01"^^xsd:dateTime > ?yearPublished). # as of 2024, all books published before 1929 qualify as public domain
+  SERVICE wikibase:label {bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".}
+  OPTIONAL {?book wdt:P50 ?author}
+}
+ORDER BY DESC(?yearPublished)
