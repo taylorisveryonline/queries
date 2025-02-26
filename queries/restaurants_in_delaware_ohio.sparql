@@ -1,0 +1,19 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX osmm: <https://www.openstreetmap.org/meta/>
+PREFIX osmt: <https://wiki.openstreetmap.org/wiki/Key:>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+
+# All restaurants in the city of Delaware, Ohio.
+#defaultView:Map
+SELECT *
+WHERE {
+	?building osmt:amenity "restaurant";
+              osmt:name ?name.
+	# Draw an approximate bounding box around the *city* of Delaware
+	SERVICE wikibase:box {
+        ?building osmm:loc ?coordinates.
+		bd:serviceParam wikibase:cornerSouthWest 'Point(-83.153 40.249)'^^geo:wktLiteral.
+		bd:serviceParam wikibase:cornerNorthEast 'Point(-83.008 40.342)'^^geo:wktLiteral.
+	}
+}
